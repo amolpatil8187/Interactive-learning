@@ -9165,3 +9165,243 @@ api - https://github.com/documentcloud/document-viewer/blob/master/public/javasc
     end: toggleClass
   });
 })( Popcorn );
+// PLUGIN: Section
+
+(function (Popcorn) {
+
+    /**
+     * Section popcorn plug-in
+     *
+     * @param {Object} options
+     *
+     * Example:
+     *  var p = Popcorn('#video')
+     *    .section({
+     *      start: 5, // seconds
+     *      end: 15, // seconds
+     *      text: 'Section caption text',
+     *      tooltip: 'This is tooltip',
+     *      target: 'sectiondiv'
+     *    });
+     **/
+
+    Popcorn.plugin("section", {
+
+        manifest: {
+            about: {
+                name: "Popcorn Section Plugin",
+                version: "0.1",
+                author: "@amol",
+                website: "amolpatil.wordpress.com"
+            },
+            options: {
+                start: {
+                    elem: "input",
+                    type: "number",
+                    label: "Start"
+                },
+                end: {
+                    elem: "input",
+                    type: "number",
+                    label: "End"
+                },
+                text: {
+                    elem: "input",
+                    type: "text",
+                    label: "Text"
+                },
+                tooltip: {
+                    elem: "input",
+                    type: "tooltip",
+                    label: "Text"
+                },
+                target: "section-container"
+            }
+        },
+
+        _setup: function (options) {
+
+            var target = Popcorn.dom.find(options.target);
+            options._container = document.createElement("div");
+            options._container.innerHTML = options.text;
+            options._container.title = options.tooltip;
+            options._container.style.textAlign = "center";
+            var pop = this;
+            options._container.onclick = function () {
+                pop.pause();
+                pop.play(options.start);
+            }
+            target.appendChild(options._container);
+        },
+
+        /**
+         * @member section
+         * The start function will be executed when the currentTime
+         * of the video  reaches the start time provided by the
+         * options variable
+         */
+        start: function (event, options) {
+            options._container.innerHTML = ">" +  options._container.innerHTML;
+        },
+
+        /**
+         * @member section
+         * The end function will be executed when the currentTime
+         * of the video  reaches the end time provided by the
+         * options variable
+         */
+        end: function (event, options) {
+            options._container.innerHTML = options.text;
+        },
+
+        _teardown: function (options) {
+            var target = Popcorn.dom.find(options.target);
+            if (target) {
+                target.removeChild(options._container);
+            }
+        }
+
+    });
+})(Popcorn);
+// PLUGIN: box
+
+(function (Popcorn) {
+
+    /**
+     * Box popcorn plug-in
+     *
+     * @param {Object} options
+     *
+     * Example:
+     *  var p = Popcorn('#video')
+     *    .box({
+     *      start: 5, // seconds
+     *      end: 15, // seconds
+     *      text: 'Section caption text',
+     *    });
+     **/
+    Popcorn.plugin("box", {
+
+        manifest: {
+            about: {
+                name: "Popcorn Box Plugin",
+                version: "0.1",
+                author: "@amol"
+            },
+            options: {
+                start: {
+                    elem: "input",
+                    type: "number",
+                    label: "Start"
+                },
+                end: {
+                    elem: "input",
+                    type: "number",
+                    label: "End"
+                },
+                link: {
+                    elem: "input",
+                    type: "Text",
+                    label:"Link"
+                },
+                text: {
+                    elem: "input",
+                    type: "Text",
+                    label: "Text"
+                },
+                css: {
+                    elem: "input",
+                    type: "Text",
+                    label: "Css"
+                },
+                height: {
+                    elem: "input",
+                    type: "number",
+                    label: "Height"
+                },
+                width: {
+                    elem: "input",
+                    type: "number",
+                    label: "Width"
+                },
+                top: {
+                    elem: "input",
+                    type: "number",
+                    label: "Top"
+                },
+                left: {
+                    elem: "input",
+                    type: "number",
+                    label: "Left"
+                },
+                hollow: {
+                    elem: "input",
+                    type: "",
+                    lable: "Hollow"
+                },
+                color: {
+                    elem: "input",
+                    type: "text",
+                    label: "Color"
+                }
+            }
+        },
+
+        _setup: function (options) {
+            var target = this.media.parentNode;
+            var div = document.createElement("div");
+            div.style.display = "none";
+            if (options.css) {
+                div.className = options.css;
+            }
+            if(options.text){
+                div.innerHTML = options.text;
+            }
+            if (options.link) {
+                var anchor = document.createElement("a");
+                anchor.href = options.link;
+                anchor.target = "_blank";
+                anchor.innerText = "Read more";
+                div.appendChild(anchor);
+            }
+            if (options.width) {
+                div.style.width = options.width +"px";
+            }
+            if (options.height) {
+                div.style.height = options.height + "px";
+            }
+            if (options.top) {
+                div.style.top = options.top;
+            }
+            if (options.left) {
+                div.style.left = options.left;
+            }
+            if (options.hollow) {
+                div.style.removeAttribute("background-color");
+                if (options.color)
+                    div.style.border = " 3px solid " + options.color;
+            } else {
+                if (options.color)
+                    div.style.backgroundColor = options.color;
+            }
+            options._container = div;
+            target.appendChild(div);
+        },
+
+        start: function (event, options) {
+            options._container.style.display = "inline";
+        },
+
+        end: function (event, options) {
+            options._container.style.display = "none";
+        },
+
+        _teardown: function (options) {
+            var target = this.media.parentNode;
+            if (target) {
+                target.removeChild(options._container);
+            }
+        }
+    });
+})(Popcorn);
+
